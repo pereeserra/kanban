@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="ca">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Kanban - Gestió de tasques</title>
+  <link rel="stylesheet" href="css/estils.css" />
+</head>
+<body>
+
+  <header class="topbar">
+    <h1>Kanban - Gestió de tasques</h1>
+    <p class="subtitle">Organitza tasques: Per fer · En curs · Fet</p>
+  </header>
+
+  <main class="layout">
+
+    <!-- Zona esquerra: formulari + filtres + estadístiques -->
+    <aside class="panel">
+      <section class="card">
+        <h2>Nova tasca</h2>
+
+        <form id="taskForm">
+          <div class="field">
+            <label for="titol">Títol *</label>
+            <input id="titol" name="titol" type="text" placeholder="Ex: Fer la pràctica" required />
+          </div>
+
+          <div class="field">
+            <label for="descripcio">Descripció</label>
+            <textarea id="descripcio" name="descripcio" rows="3" placeholder="Detalls de la tasca..."></textarea>
+          </div>
+
+          <div class="field">
+            <label for="prioritat">Prioritat</label>
+            <select id="prioritat" name="prioritat">
+              <option value="baixa">Baixa</option>
+              <option value="mitjana" selected>Mitjana</option>
+              <option value="alta">Alta</option>
+            </select>
+          </div>
+
+          <div class="field">
+            <label for="dataVenciment">Data límit</label>
+            <input id="dataVenciment" name="dataVenciment" type="date" />
+          </div>
+
+          <button id="submitBtn" type="submit">Afegir tasca</button>
+          <input id="taskId" type="hidden" value="" />
+        </form>
+
+        <p id="formError" class="error" aria-live="polite"></p>
+      </section>
+
+      <section class="card">
+        <h2>Filtres i cerca</h2>
+
+        <div class="field">
+          <label for="filtreEstat">Filtre per estat</label>
+          <select id="filtreEstat">
+            <option value="tots" selected>Tots</option>
+            <option value="perFer">Per fer</option>
+            <option value="enCurs">En curs</option>
+            <option value="fet">Fet</option>
+          </select>
+        </div>
+
+        <div class="field">
+          <label for="filtrePrioritat">Filtre per prioritat</label>
+          <select id="filtrePrioritat">
+            <option value="totes" selected>Totes</option>
+            <option value="baixa">Baixa</option>
+            <option value="mitjana">Mitjana</option>
+            <option value="alta">Alta</option>
+          </select>
+        </div>
+
+        <div class="field">
+          <label for="cercaText">Cerca</label>
+          <input id="cercaText" type="search" placeholder="Cerca per títol o descripció..." />
+        </div>
+      </section>
+
+      <section class="card">
+        <h2>Estadístiques</h2>
+        <ul class="stats">
+          <li>Total: <strong id="statTotal">0</strong></li>
+          <li>Per fer: <strong id="statPerFer">0</strong></li>
+          <li>En curs: <strong id="statEnCurs">0</strong></li>
+          <li>Fet: <strong id="statFet">0</strong></li>
+          <li>Completades: <strong id="statPercent">0%</strong></li>
+        </ul>
+      </section>
+    </aside>
+
+    <!-- Zona dreta: tauler Kanban -->
+    <section class="board">
+
+      <section class="column" data-estat="perFer">
+        <header class="column-header">
+          <h2>Per fer</h2>
+          <span class="badge" id="badgePerFer">0</span>
+        </header>
+        <div class="column-body" id="colPerFer"></div>
+      </section>
+
+      <section class="column" data-estat="enCurs">
+        <header class="column-header">
+          <h2>En curs</h2>
+          <span class="badge" id="badgeEnCurs">0</span>
+        </header>
+        <div class="column-body" id="colEnCurs"></div>
+      </section>
+
+      <section class="column" data-estat="fet">
+        <header class="column-header">
+          <h2>Fet</h2>
+          <span class="badge" id="badgeFet">0</span>
+        </header>
+        <div class="column-body" id="colFet"></div>
+      </section>
+
+    </section>
+  </main>
+
+  <footer class="footer">
+    <small>Projecte Kanban · HTML/CSS/JS · localStorage</small>
+  </footer>
+
+  <script src="js/script.js"></script>
+</body>
+</html>
