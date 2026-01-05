@@ -34,6 +34,19 @@ const statEnCurs = document.getElementById("statEnCurs");
 const statFet = document.getElementById("statFet");
 const statPercent = document.getElementById("statPercent");
 
+const filtreEstat = document.getElementById("filtreEstat");
+const filtrePrioritat = document.getElementById("filtrePrioritat");
+const cercaText = document.getElementById("cercaText");
+
+// ==========================
+// FILTRES (estat app)
+// ==========================
+let filtres = {
+  estat: "tots",
+  prioritat: "totes",
+  text: ""
+};
+
 // ==========================
 // STORAGE
 // ==========================
@@ -91,17 +104,36 @@ function textEstat(estat) {
   return "Fet";
 }
 
+function getTasquesFiltrades(tasquesOriginals, filtresActuals) {
+  const text = filtresActuals.text.trim().toLowerCase();
+
+  return tasquesOriginals.filter(t => {
+    const matchEstat =
+      filtresActuals.estat === "tots" || t.estat === filtresActuals.estat;
+
+    const matchPrioritat =
+      filtresActuals.prioritat === "totes" || t.prioritat === filtresActuals.prioritat;
+
+    const matchText =
+      text === "" ||
+      t.titol.toLowerCase().includes(text) ||
+      (t.descripcio || "").toLowerCase().includes(text);
+
+    return matchEstat && matchPrioritat && matchText;
+  });
+}
+
 // ==========================
 // UI - RENDER
 // ==========================
 function renderTauler() {
-  // buidar columnes
   colPerFer.innerHTML = "";
   colEnCurs.innerHTML = "";
   colFet.innerHTML = "";
 
-  // pintar tasques
-  for (const t of tasques) {
+  const visibles = getTasquesFiltrades(tasques, filtres);
+
+  for (const t of visibles) {
     const card = crearTargetaTasca(t);
 
     if (t.estat === "perFer") colPerFer.appendChild(card);
@@ -109,9 +141,8 @@ function renderTauler() {
     else colFet.appendChild(card);
   }
 
-  // badges + stats
-  actualitzarComptadors();
-  actualitzarEstadistiques();
+  actualitzarComptadors(visibles);
+  actualitzarEstadistiques(visibles);
 }
 
 function crearTargetaTasca(t) {
@@ -152,7 +183,6 @@ function crearTargetaTasca(t) {
   const actions = document.createElement("div");
   actions.className = "task-actions";
 
-  // Canviar estat (select)
   const select = document.createElement("select");
   select.className = "task-select";
   select.innerHTML = `
@@ -165,7 +195,6 @@ function crearTargetaTasca(t) {
     canviarEstat(t.id, e.target.value);
   });
 
-  // Editar
   const btnEdit = document.createElement("button");
   btnEdit.type = "button";
   btnEdit.className = "btn small";
@@ -174,7 +203,6 @@ function crearTargetaTasca(t) {
     carregarFormEdicio(t.id);
   });
 
-  // Eliminar
   const btnDel = document.createElement("button");
   btnDel.type = "button";
   btnDel.className = "btn small danger";
@@ -195,21 +223,21 @@ function crearTargetaTasca(t) {
   return card;
 }
 
-function actualitzarComptadors() {
-  const perFer = tasques.filter(t => t.estat === "perFer").length;
-  const enCurs = tasques.filter(t => t.estat === "enCurs").length;
-  const fet = tasques.filter(t => t.estat === "fet").length;
+function actualitzarComptadors(llista) {
+  const perFer = llista.filter(t => t.estat === "perFer").length;
+  const enCurs = llista.filter(t => t.estat === "enCurs").length;
+  const fet = llista.filter(t => t.estat === "fet").length;
 
   badgePerFer.textContent = perFer;
   badgeEnCurs.textContent = enCurs;
   badgeFet.textContent = fet;
 }
 
-function actualitzarEstadistiques() {
-  const total = tasques.length;
-  const perFer = tasques.filter(t => t.estat === "perFer").length;
-  const enCurs = tasques.filter(t => t.estat === "enCurs").length;
-  const fet = tasques.filter(t => t.estat === "fet").length;
+function actualitzarEstadistiques(llista) {
+  const total = llista.length;
+  const perFer = llista.filter(t => t.estat === "perFer").length;
+  const enCurs = llista.filter(t => t.estat === "enCurs").length;
+  const fet = llista.filter(t => t.estat === "fet").length;
 
   statTotal.textContent = total;
   statPerFer.textContent = perFer;
@@ -234,7 +262,7 @@ function afegirTasca(dades) {
     creatEl: new Date().toISOString()
   };
 
-  tasques.unshift(nova); // la posam a dalt
+  tasques.unshift(nova);
   guardarTasques(tasques);
   renderTauler();
 }
@@ -282,7 +310,6 @@ function eliminarTasca(id) {
   guardarTasques(tasques);
   renderTauler();
 
-  // si estaves editant aquesta tasca, reset form
   if (inputTaskId.value === id) netejarForm();
 }
 
@@ -320,13 +347,27 @@ taskForm.addEventListener("submit", (e) => {
   }
 });
 
+filtreEstat.addEventListener("change", (e) => {
+  filtres.estat = e.target.value;
+  renderTauler();
+});
+
+filtrePrioritat.addEventListener("change", (e) => {
+  filtres.prioritat = e.target.value;
+  renderTauler();
+});
+
+cercaText.addEventListener("input", (e) => {
+  filtres.text = e.target.value;
+  renderTauler();
+});
+
 // ==========================
 // INIT
 // ==========================
 function init() {
   tasques = carregarTasques();
 
-  // si vols, pots deixar dades de prova la 1a vegada
   if (tasques.length === 0) {
     tasques = [
       {
