@@ -59,10 +59,5 @@ kanban/
 
 ---
 
-## 🖼️ Captures de pantalla
-*(Afegeix aquí captures del tauler Kanban, del formulari, dels filtres i de la vista en mòbil)*
-
----
-
 ## 🧠 Conclusions
 Aquest projecte ha permès consolidar conceptes clau de JavaScript com la manipulació del DOM, la gestió de dades i la persistència amb localStorage, així com aplicar bones pràctiques de disseny web i control de versions amb Git i GitHub.
