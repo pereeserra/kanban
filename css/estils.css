@@ -167,3 +167,25 @@ button:hover { filter: brightness(0.95); }
 .priority-baixa { border-color: #22c55e; }
 .priority-mitjana { border-color: #f59e0b; }
 .priority-alta { border-color: #ef4444; }
+
+/* ==========================
+   ISSUE 5 - RESPONSIVE EXTRA
+========================== */
+@media (max-width: 600px) {
+  .topbar { padding: 14px 14px; }
+  .layout { padding: 12px; gap: 12px; }
+  .card { padding: 12px; }
+  button, .btn.small { width: 100%; }
+
+  .task-actions {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .task-select { width: 100%; }
+}
+
+/* Si vols veure columnes en horitzontal a pantalles mitjanes */
+@media (max-width: 900px) and (min-width: 601px) {
+  .board { grid-template-columns: 1fr; }
+}
